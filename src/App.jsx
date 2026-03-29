@@ -1,5 +1,5 @@
 import PortfolioPage from './pages/PortfolioPage'
-import { SpeedInsights } from "@vercel/speed-insights/next"
+import { SpeedInsights } from "@vercel/speed-insights/react"
 
 function App() {
   return (
