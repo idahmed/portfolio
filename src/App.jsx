@@ -1,7 +1,13 @@
 import PortfolioPage from './pages/PortfolioPage'
+import { SpeedInsights } from "@vercel/speed-insights/next"
 
 function App() {
-  return <PortfolioPage />
+  return (
+    <>
+      <PortfolioPage />
+      <SpeedInsights />
+    </>
+  )
 }
 
 export default App
