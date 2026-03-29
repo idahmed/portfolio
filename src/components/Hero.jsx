@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { personal } from '../data/resume';
+import ChatWidget from './ChatWidget';
 
 function Hero() {
   const [showResumeModal, setShowResumeModal] = useState(false);
@@ -23,7 +24,7 @@ function Hero() {
 
       <p className="hero-summary">{personal.summary}</p>
 
-      <div className="hero-links">
+      <div className="hero-links" style={{ marginBottom: '0' }}>
         {links.map((link) =>
           link.isResume ? (
             <button
@@ -54,6 +55,8 @@ function Hero() {
           )
         )}
       </div>
+
+      <ChatWidget />
 
       {showResumeModal && (
         <div className="modal-backdrop" onClick={(e) => { if (e.target === e.currentTarget) setShowResumeModal(false); }}>
