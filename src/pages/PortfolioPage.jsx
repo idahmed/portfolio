@@ -5,8 +5,8 @@ import Skills from '../components/Skills';
 import Projects from '../components/Projects';
 
 const TABS = [
-  { id: 'about', label: 'About' },
-  { id: 'skills', label: 'Skills' },
+  { id: 'about',    label: 'About'    },
+  { id: 'skills',   label: 'Skills'   },
   { id: 'projects', label: 'Projects' },
 ];
 
@@ -25,15 +25,15 @@ function PortfolioPage() {
   }, [theme]);
 
   const toggleTheme = () => {
-    setTheme(prev => (prev === 'dark' ? 'light' : 'dark'));
+    setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));
   };
 
   const renderTab = () => {
     switch (activeTab) {
-      case 'about': return <Hero />;
-      case 'skills': return <Skills />;
+      case 'about':    return <Hero />;
+      case 'skills':   return <Skills />;
       case 'projects': return <Projects />;
-      default: return <Hero />;
+      default:         return <Hero />;
     }
   };
 

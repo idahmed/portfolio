@@ -7,12 +7,14 @@ function Projects() {
 
   return (
     <div className="projects-content">
+      <p className="section-label">Selected Work</p>
       <div className="projects-grid">
-        {projects.map((project) => (
+        {projects.map((project, i) => (
           <button
             key={project.id}
             className="project-card"
             onClick={() => setSelected(project)}
+            style={{ animationDelay: `${i * 0.05}s` }}
           >
             <div className="project-card-top">
               <h3 className="project-card-title">{project.title}</h3>
@@ -27,7 +29,7 @@ function Projects() {
                 <span className="pill pill--sm pill--more">+{project.tech.length - 4}</span>
               )}
             </div>
-            <span className="project-card-hint">View Details →</span>
+            <span className="project-card-hint">View details ›</span>
           </button>
         ))}
       </div>
