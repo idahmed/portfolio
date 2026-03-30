@@ -27,6 +27,34 @@ if (typeof document !== 'undefined' && !document.getElementById('cw-styles')) {
     .cw-input::placeholder { color: var(--text-muted); }
     .cw-send:disabled { opacity: 0.35; cursor: not-allowed; }
     .cw-send:not(:disabled):hover { background: var(--accent-hover) !important; }
+
+    @keyframes cw-pulse-border {
+      0%, 100% { box-shadow: 0 0 0 0px color-mix(in srgb, var(--accent) 30%, transparent); border-color: var(--border); }
+      50% { box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 15%, transparent); border-color: var(--accent); }
+    }
+    @keyframes cw-sparkle {
+      0%, 100% { transform: scale(1) rotate(0deg); opacity: 0.7; }
+      50% { transform: scale(1.3) rotate(20deg); opacity: 1; }
+    }
+    @keyframes cw-cursor-blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+    .cw-pill {
+      animation: cw-pulse-border 2.8s ease-in-out infinite;
+    }
+    .cw-pill:hover {
+      animation: none !important;
+    }
+    .cw-sparkle {
+      animation: cw-sparkle 2.8s ease-in-out infinite;
+      display: inline-block;
+    }
+    .cw-cursor {
+      animation: cw-cursor-blink 0.9s step-end infinite;
+      margin-left: 1px;
+      font-weight: 300;
+    }
   `;
   document.head.appendChild(s);
 }
@@ -49,6 +77,52 @@ function TypingDots() {
   );
 }
 
+const PROMPTS = [
+  'What has Yassine built?',
+  'What are his top skills?',
+  'Is he open to work?',
+  'Tell me about his experience…',
+  'What stack does he use?',
+];
+
+function useTypewriter(phrases, { typingSpeed = 55, pauseMs = 1800, deletingSpeed = 30 } = {}) {
+  const [display, setDisplay] = useState('');
+  const phraseIdx = useRef(0);
+  const charIdx = useRef(0);
+  const deleting = useRef(false);
+
+  useEffect(() => {
+    let timeout;
+    function tick() {
+      const phrase = phrases[phraseIdx.current];
+      if (!deleting.current) {
+        charIdx.current += 1;
+        setDisplay(phrase.slice(0, charIdx.current));
+        if (charIdx.current === phrase.length) {
+          deleting.current = true;
+          timeout = setTimeout(tick, pauseMs);
+        } else {
+          timeout = setTimeout(tick, typingSpeed);
+        }
+      } else {
+        charIdx.current -= 1;
+        setDisplay(phrase.slice(0, charIdx.current));
+        if (charIdx.current === 0) {
+          deleting.current = false;
+          phraseIdx.current = (phraseIdx.current + 1) % phrases.length;
+          timeout = setTimeout(tick, typingSpeed);
+        } else {
+          timeout = setTimeout(tick, deletingSpeed);
+        }
+      }
+    }
+    timeout = setTimeout(tick, typingSpeed);
+    return () => clearTimeout(timeout);
+  }, []);
+
+  return display;
+}
+
 export default function ChatWidget() {
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState([]); // { role: 'user'|'assistant', content }
@@ -56,6 +130,7 @@ export default function ChatWidget() {
   const [loading, setLoading] = useState(false);
   const bottomRef = useRef(null);
   const inputRef = useRef(null);
+  const typedText = useTypewriter(PROMPTS);
 
   useEffect(() => {
     if (open) {
@@ -117,6 +192,7 @@ export default function ChatWidget() {
     return (
       <button
         onClick={handleOpen}
+        className="cw-pill"
         style={{
           display: 'flex',
           alignItems: 'center',
@@ -131,7 +207,7 @@ export default function ChatWidget() {
           fontFamily: 'inherit',
           color: 'var(--text-muted)',
           fontSize: '0.9rem',
-          transition: 'border-color 0.2s, background 0.2s',
+          transition: 'border-color 0.2s, background 0.2s, box-shadow 0.2s',
         }}
         onMouseEnter={(e) => {
           e.currentTarget.style.borderColor = 'var(--accent)';
@@ -143,8 +219,11 @@ export default function ChatWidget() {
         }}
         aria-label="Open AI chat"
       >
-        <span style={{ fontSize: '1rem', flexShrink: 0 }}>✦</span>
-        <span>Ask me anything about Yassine…</span>
+        <span className="cw-sparkle" style={{ fontSize: '1rem', flexShrink: 0, color: 'var(--accent)' }}>✦</span>
+        <span style={{ flex: 1, textAlign: 'left', minWidth: 0, overflow: 'hidden', whiteSpace: 'nowrap' }}>
+          {typedText || '\u00A0'}
+          <span className="cw-cursor" style={{ color: 'var(--accent)' }}>|</span>
+        </span>
       </button>
     );
   }
