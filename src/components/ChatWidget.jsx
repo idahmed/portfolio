@@ -8,53 +8,50 @@ if (typeof document !== 'undefined' && !document.getElementById('cw-styles')) {
   s.id = 'cw-styles';
   s.textContent = `
     @keyframes cw-fade-in {
-      from { opacity: 0; transform: translateY(6px); }
+      from { opacity: 0; transform: translateY(10px); }
       to   { opacity: 1; transform: translateY(0); }
     }
     @keyframes cw-dot {
       0%, 80%, 100% { transform: translateY(0); opacity: 0.4; }
       40%            { transform: translateY(-4px); opacity: 1; }
     }
+    @keyframes cw-pulse-border {
+      0%, 100% {
+        box-shadow: 0 0 0 0 rgba(108, 99, 255, 0);
+        border-color: rgba(108, 99, 255, 0.15);
+      }
+      50% {
+        box-shadow: 0 0 0 4px rgba(108, 99, 255, 0.1);
+        border-color: rgba(108, 99, 255, 0.45);
+      }
+    }
+    @keyframes cw-sparkle {
+      0%, 100% { transform: scale(1) rotate(0deg); opacity: 0.8; }
+      50%       { transform: scale(1.25) rotate(20deg); opacity: 1; }
+    }
+    @keyframes cw-cursor-blink {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0; }
+    }
+
     .cw-dot { animation: cw-dot 1.2s infinite ease-in-out; }
     .cw-dot:nth-child(2) { animation-delay: 0.15s; }
     .cw-dot:nth-child(3) { animation-delay: 0.3s; }
 
-    .cw-messages::-webkit-scrollbar { width: 4px; }
+    .cw-pill-btn { animation: cw-pulse-border 3s ease-in-out infinite; }
+    .cw-pill-btn:hover { animation: none !important; }
+
+    .cw-sparkle { animation: cw-sparkle 3s ease-in-out infinite; display: inline-block; }
+    .cw-cursor  { animation: cw-cursor-blink 0.9s step-end infinite; margin-left: 1px; font-weight: 300; }
+
+    .cw-messages::-webkit-scrollbar { width: 3px; }
     .cw-messages::-webkit-scrollbar-track { background: transparent; }
-    .cw-messages::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+    .cw-messages::-webkit-scrollbar-thumb { background: rgba(108, 99, 255, 0.2); border-radius: 4px; }
 
-    .cw-input:focus { outline: none; border-color: var(--accent) !important; }
-    .cw-input::placeholder { color: var(--text-muted); }
-    .cw-send:disabled { opacity: 0.35; cursor: not-allowed; }
-    .cw-send:not(:disabled):hover { background: var(--accent-hover) !important; }
-
-    @keyframes cw-pulse-border {
-      0%, 100% { box-shadow: 0 0 0 0px color-mix(in srgb, var(--accent) 30%, transparent); border-color: var(--border); }
-      50% { box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 15%, transparent); border-color: var(--accent); }
-    }
-    @keyframes cw-sparkle {
-      0%, 100% { transform: scale(1) rotate(0deg); opacity: 0.7; }
-      50% { transform: scale(1.3) rotate(20deg); opacity: 1; }
-    }
-    @keyframes cw-cursor-blink {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0; }
-    }
-    .cw-pill {
-      animation: cw-pulse-border 2.8s ease-in-out infinite;
-    }
-    .cw-pill:hover {
-      animation: none !important;
-    }
-    .cw-sparkle {
-      animation: cw-sparkle 2.8s ease-in-out infinite;
-      display: inline-block;
-    }
-    .cw-cursor {
-      animation: cw-cursor-blink 0.9s step-end infinite;
-      margin-left: 1px;
-      font-weight: 300;
-    }
+    .cw-input:focus { outline: none; border-color: rgba(108, 99, 255, 0.5) !important; }
+    .cw-input::placeholder { color: var(--text-secondary); }
+    .cw-send:disabled { opacity: 0.3; cursor: not-allowed; }
+    .cw-send:not(:disabled):hover { opacity: 0.85; }
   `;
   document.head.appendChild(s);
 }
@@ -65,11 +62,11 @@ function TypingDots() {
     width: 6,
     height: 6,
     borderRadius: '50%',
-    background: 'var(--accent)',
+    background: 'var(--accent-primary)',
     margin: '0 2px',
   };
   return (
-    <div style={{ display: 'flex', alignItems: 'center', padding: '6px 2px' }}>
+    <div style={{ display: 'flex', alignItems: 'center', padding: '4px 2px' }}>
       <span className="cw-dot" style={dot} />
       <span className="cw-dot" style={dot} />
       <span className="cw-dot" style={dot} />
@@ -88,8 +85,8 @@ const PROMPTS = [
 function useTypewriter(phrases, { typingSpeed = 55, pauseMs = 1800, deletingSpeed = 30 } = {}) {
   const [display, setDisplay] = useState('');
   const phraseIdx = useRef(0);
-  const charIdx = useRef(0);
-  const deleting = useRef(false);
+  const charIdx   = useRef(0);
+  const deleting  = useRef(false);
 
   useEffect(() => {
     let timeout;
@@ -124,13 +121,13 @@ function useTypewriter(phrases, { typingSpeed = 55, pauseMs = 1800, deletingSpee
 }
 
 export default function ChatWidget() {
-  const [open, setOpen] = useState(false);
-  const [messages, setMessages] = useState([]); // { role: 'user'|'assistant', content }
-  const [input, setInput] = useState('');
+  const [open, setOpen]       = useState(false);
+  const [messages, setMessages] = useState([]);
+  const [input, setInput]     = useState('');
   const [loading, setLoading] = useState(false);
-  const bottomRef = useRef(null);
-  const inputRef = useRef(null);
-  const typedText = useTypewriter(PROMPTS);
+  const bottomRef  = useRef(null);
+  const inputRef   = useRef(null);
+  const typedText  = useTypewriter(PROMPTS);
 
   useEffect(() => {
     if (open) {
@@ -140,7 +137,6 @@ export default function ChatWidget() {
 
   function handleOpen() {
     setOpen(true);
-    // Focus input on next tick after expand animation
     setTimeout(() => inputRef.current?.focus(), 50);
   }
 
@@ -167,7 +163,9 @@ export default function ChatWidget() {
         ...prev,
         {
           role: 'assistant',
-          content: res.ok && data.reply ? data.reply : (data.error || 'Something went wrong, please try again.'),
+          content: res.ok && data.reply
+            ? data.reply
+            : (data.error || 'Something went wrong, please try again.'),
         },
       ]);
     } catch {
@@ -187,59 +185,79 @@ export default function ChatWidget() {
     }
   }
 
-  // ── Collapsed: pill input bar ──────────────────────────────────────────────
+  // ── Collapsed: pill trigger ─────────────────────────────────────────────────
   if (!open) {
     return (
       <button
         onClick={handleOpen}
-        className="cw-pill"
+        className="cw-pill-btn"
+        aria-label="Open AI chat"
         style={{
           display: 'flex',
           alignItems: 'center',
-          gap: '0.6rem',
+          gap: '0.65rem',
           width: '100%',
-          marginTop: '1.25rem',
-          padding: '0.75rem 1rem',
-          background: 'var(--bg-alt)',
-          border: '1px solid var(--border)',
+          marginTop: '1.5rem',
+          padding: '0.8rem 1.1rem',
+          background: 'var(--bg-secondary)',
+          border: '1px solid rgba(108, 99, 255, 0.2)',
           borderRadius: '999px',
           cursor: 'text',
           fontFamily: 'inherit',
-          color: 'var(--text-muted)',
-          fontSize: '0.9rem',
+          color: 'var(--text-secondary)',
+          fontSize: '0.88rem',
           transition: 'border-color 0.2s, background 0.2s, box-shadow 0.2s',
         }}
         onMouseEnter={(e) => {
-          e.currentTarget.style.borderColor = 'var(--accent)';
-          e.currentTarget.style.background = 'var(--card-bg-hover)';
+          e.currentTarget.style.borderColor = 'rgba(108, 99, 255, 0.5)';
+          e.currentTarget.style.background  = 'var(--bg-tertiary)';
         }}
         onMouseLeave={(e) => {
-          e.currentTarget.style.borderColor = 'var(--border)';
-          e.currentTarget.style.background = 'var(--bg-alt)';
+          e.currentTarget.style.borderColor = 'rgba(108, 99, 255, 0.2)';
+          e.currentTarget.style.background  = 'var(--bg-secondary)';
         }}
-        aria-label="Open AI chat"
       >
-        <span className="cw-sparkle" style={{ fontSize: '1rem', flexShrink: 0, color: 'var(--accent)' }}>✦</span>
+        <span
+          className="cw-sparkle"
+          style={{ fontSize: '0.95rem', flexShrink: 0, color: 'var(--accent-primary)' }}
+        >
+          ✦
+        </span>
         <span style={{ flex: 1, textAlign: 'left', minWidth: 0, overflow: 'hidden', whiteSpace: 'nowrap' }}>
           {typedText || '\u00A0'}
-          <span className="cw-cursor" style={{ color: 'var(--accent)' }}>|</span>
+          <span className="cw-cursor" style={{ color: 'var(--accent-primary)' }}>|</span>
+        </span>
+        <span style={{
+          fontSize: '0.72rem',
+          fontWeight: 600,
+          letterSpacing: '0.05em',
+          textTransform: 'uppercase',
+          color: 'var(--accent-primary)',
+          background: 'rgba(108, 99, 255, 0.1)',
+          border: '1px solid rgba(108, 99, 255, 0.25)',
+          padding: '0.2rem 0.55rem',
+          borderRadius: '999px',
+          flexShrink: 0,
+        }}>
+          Ask AI
         </span>
       </button>
     );
   }
 
-  // ── Expanded: chat panel ───────────────────────────────────────────────────
+  // ── Expanded: chat panel ────────────────────────────────────────────────────
   return (
     <div
       style={{
-        marginTop: '1.25rem',
-        border: '1px solid var(--border)',
+        marginTop: '1.5rem',
+        border: '1px solid rgba(108, 99, 255, 0.25)',
         borderRadius: '16px',
-        background: 'var(--bg-alt)',
+        background: 'var(--bg-secondary)',
         display: 'flex',
         flexDirection: 'column',
-        animation: 'cw-fade-in 0.2s ease',
+        animation: 'cw-fade-in 0.22s ease',
         overflow: 'hidden',
+        boxShadow: '0 8px 32px rgba(0,0,0,0.25)',
       }}
     >
       {/* Header */}
@@ -248,31 +266,38 @@ export default function ChatWidget() {
           display: 'flex',
           alignItems: 'center',
           gap: '0.6rem',
-          padding: '0.75rem 1rem',
-          borderBottom: '1px solid var(--border)',
+          padding: '0.85rem 1rem',
+          borderBottom: '1px solid rgba(108, 99, 255, 0.12)',
+          background: 'linear-gradient(90deg, rgba(108,99,255,0.06), rgba(0,212,255,0.04))',
         }}
       >
-        <span style={{ fontSize: '1rem', color: 'var(--accent)' }}>✦</span>
-        <span style={{ fontSize: '0.83rem', fontWeight: 600, color: 'var(--text)', flex: 1 }}>
+        <span style={{ fontSize: '0.95rem', color: 'var(--accent-primary)' }}>✦</span>
+        <span style={{ fontSize: '0.83rem', fontWeight: 600, color: 'var(--text-primary)', flex: 1 }}>
           Ask about Yassine
         </span>
         <button
           onClick={() => setOpen(false)}
+          aria-label="Close chat"
           style={{
             background: 'none',
-            border: 'none',
-            color: 'var(--text-muted)',
+            border: '1px solid rgba(108, 99, 255, 0.15)',
+            color: 'var(--text-secondary)',
             cursor: 'pointer',
-            fontSize: '1rem',
-            padding: '2px 6px',
+            fontSize: '0.8rem',
+            padding: '3px 8px',
             borderRadius: '6px',
             fontFamily: 'inherit',
             lineHeight: 1,
-            transition: 'color 0.15s',
+            transition: 'color 0.15s, background 0.15s',
           }}
-          onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--text)')}
-          onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--text-muted)')}
-          aria-label="Close chat"
+          onMouseEnter={(e) => {
+            e.currentTarget.style.color = 'var(--text-primary)';
+            e.currentTarget.style.background = 'rgba(108,99,255,0.1)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.color = 'var(--text-secondary)';
+            e.currentTarget.style.background = 'none';
+          }}
         >
           ✕
         </button>
@@ -284,17 +309,16 @@ export default function ChatWidget() {
         style={{
           flex: 1,
           overflowY: 'auto',
-          padding: '0.75rem 1rem',
+          padding: '1rem',
           display: 'flex',
           flexDirection: 'column',
-          gap: '0.6rem',
-          maxHeight: '340px',
-          minHeight: messages.length === 0 ? '64px' : undefined,
+          gap: '0.65rem',
+          maxHeight: '320px',
+          minHeight: messages.length === 0 ? '72px' : undefined,
         }}
       >
-        {/* Welcome */}
-        <p style={{ fontSize: '0.83rem', color: 'var(--text-muted)', margin: 0 }}>
-          Hi! Ask me anything about Yassine 👋
+        <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', margin: 0 }}>
+          Hi! Ask me anything about Yassine's work and experience.
         </p>
 
         {messages.map((msg, i) => (
@@ -308,13 +332,15 @@ export default function ChatWidget() {
             <div
               style={{
                 maxWidth: '82%',
-                padding: '0.5rem 0.8rem',
+                padding: '0.55rem 0.85rem',
                 borderRadius: msg.role === 'user' ? '14px 14px 3px 14px' : '14px 14px 14px 3px',
-                background: msg.role === 'user' ? 'var(--accent)' : 'var(--card-bg-hover)',
-                border: msg.role === 'user' ? 'none' : '1px solid var(--border)',
-                color: msg.role === 'user' ? '#fff' : 'var(--text)',
+                background: msg.role === 'user'
+                  ? 'linear-gradient(135deg, #6c63ff, #00d4ff)'
+                  : 'var(--bg-tertiary)',
+                border: msg.role === 'user' ? 'none' : '1px solid rgba(108,99,255,0.15)',
+                color: msg.role === 'user' ? '#fff' : 'var(--text-primary)',
                 fontSize: '0.87rem',
-                lineHeight: 1.55,
+                lineHeight: 1.6,
                 wordBreak: 'break-word',
                 whiteSpace: 'pre-wrap',
               }}
@@ -328,10 +354,10 @@ export default function ChatWidget() {
           <div style={{ display: 'flex', justifyContent: 'flex-start' }}>
             <div
               style={{
-                padding: '0.5rem 0.8rem',
+                padding: '0.5rem 0.85rem',
                 borderRadius: '14px 14px 14px 3px',
-                background: 'var(--card-bg-hover)',
-                border: '1px solid var(--border)',
+                background: 'var(--bg-tertiary)',
+                border: '1px solid rgba(108,99,255,0.15)',
               }}
             >
               <TypingDots />
@@ -346,9 +372,10 @@ export default function ChatWidget() {
         style={{
           display: 'flex',
           gap: '0.5rem',
-          padding: '0.65rem 0.75rem',
-          borderTop: '1px solid var(--border)',
+          padding: '0.75rem',
+          borderTop: '1px solid rgba(108,99,255,0.12)',
           alignItems: 'flex-end',
+          background: 'var(--bg-secondary)',
         }}
       >
         <textarea
@@ -362,17 +389,17 @@ export default function ChatWidget() {
           rows={1}
           style={{
             flex: 1,
-            background: 'var(--bg)',
-            border: '1px solid var(--border)',
+            background: 'var(--bg-tertiary)',
+            border: '1px solid rgba(108,99,255,0.2)',
             borderRadius: '10px',
-            padding: '0.5rem 0.75rem',
+            padding: '0.55rem 0.75rem',
             fontSize: '0.87rem',
-            color: 'var(--text)',
+            color: 'var(--text-primary)',
             fontFamily: 'inherit',
             resize: 'none',
-            minHeight: '36px',
+            minHeight: '38px',
             maxHeight: '96px',
-            lineHeight: 1.5,
+            lineHeight: 1.55,
             transition: 'border-color 0.15s',
             overflowY: 'auto',
           }}
@@ -385,22 +412,22 @@ export default function ChatWidget() {
           className="cw-send"
           onClick={sendMessage}
           disabled={!input.trim() || loading}
+          aria-label="Send"
           style={{
-            background: 'var(--accent)',
+            background: 'linear-gradient(135deg, #6c63ff, #00d4ff)',
             border: 'none',
             borderRadius: '10px',
-            width: '36px',
-            height: '36px',
+            width: '38px',
+            height: '38px',
             flexShrink: 0,
             cursor: 'pointer',
             color: '#fff',
-            fontSize: '1rem',
+            fontSize: '1.05rem',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            transition: 'background 0.15s',
+            transition: 'opacity 0.15s',
           }}
-          aria-label="Send"
         >
           ↑
         </button>

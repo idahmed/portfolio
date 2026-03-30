@@ -21,13 +21,14 @@ function ProjectModal({ project, onClose }) {
 
   return (
     <div className="modal-backdrop" onClick={handleBackdrop}>
-      <div className="modal-card">
+      <div className="modal-card" role="dialog" aria-modal="true" aria-labelledby="modal-title">
         <button className="modal-close" onClick={onClose} aria-label="Close">
           ✕
         </button>
 
         <div className="modal-header">
-          <h3 className="modal-title">{project.title}</h3>
+          <h3 className="modal-title" id="modal-title">{project.title}</h3>
+          <div className="modal-title-line" />
           <div className="modal-meta">
             <span className="modal-company">{project.company}</span>
             {project.period && <span className="modal-period">{project.period}</span>}
