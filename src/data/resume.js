@@ -47,6 +47,18 @@ export const skills = [
     items: ["Docker", "Docker Compose", "Git/GitHub", "Linux", "GitHub Actions", "CI/CD"],
   },
   {
+    category: "Cloud (AWS)",
+    icon: "☁️",
+    description: "Serverless compute, storage, managed APIs, and relational DB",
+    items: ["AWS Lambda", "Amazon S3", "Amazon API Gateway", "Amazon RDS"],
+  },
+  {
+    category: "AI & LLM",
+    icon: "🧠",
+    description: "LLM orchestration, provider APIs, and application tooling",
+    items: ["LangChain", "AI APIs"],
+  },
+  {
     category: "Architecture",
     icon: "🏗️",
     description: "Designing scalable distributed systems",
@@ -65,6 +77,21 @@ export const skills = [
     items: ["TDD", "Clean Code", "Scalable API Design"],
   },
 ];
+
+/** Unique skill labels in category order, for compact UI (e.g. Hero chips). */
+export function getAllSkillLabels() {
+  const seen = new Set();
+  const labels = [];
+  for (const group of skills) {
+    for (const item of group.items) {
+      if (!seen.has(item)) {
+        seen.add(item);
+        labels.push(item);
+      }
+    }
+  }
+  return labels;
+}
 
 export const projects = [
   {

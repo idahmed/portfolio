@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { personal } from '../data/resume';
+import { getAllSkillLabels, personal } from '../data/resume';
 import ChatWidget from './ChatWidget';
 
 function PinIcon() {
@@ -93,7 +93,7 @@ function Hero() {
             <p className="availability-role">
               <strong>Senior Backend Engineer</strong>
               <br />
-              Python · Django · FastAPI
+              Python · Django · FastAPI · AWS · LangChain
               <br />
               Open to remote &amp; on-site roles
             </p>
@@ -127,6 +127,15 @@ function Hero() {
             </a>
           )
         )}
+      </div>
+
+      <div className="hero-tech" aria-label="Technical skills">
+        <p className="hero-tech-label">Stack</p>
+        <div className="hero-tech-pills">
+          {getAllSkillLabels().map((label) => (
+            <span className="pill pill-hero" key={label}>{label}</span>
+          ))}
+        </div>
       </div>
 
       <ChatWidget />

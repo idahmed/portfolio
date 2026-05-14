@@ -455,6 +455,33 @@ a:hover {
   opacity: 0.75;
 }
 
+/* Hero — full stack chips (mirrors Skills tab data) */
+.hero-tech {
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--border);
+}
+
+.hero-tech-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--accent-primary);
+  margin-bottom: 0.75rem;
+}
+
+.hero-tech-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.pill-hero {
+  font-size: 0.7rem;
+  padding: 0.2rem 0.55rem;
+}
+
 /* Resume modal */
 .resume-modal {
   max-width: 380px;
