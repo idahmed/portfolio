@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useLayoutEffect } from 'react';
 
 const WIDGET_TOKEN = import.meta.env.VITE_APP_SECRET_TOKEN || '';
 
@@ -9,12 +9,24 @@ const SUGGESTED_PROMPTS = [
   'Which frameworks does he use most?',
 ];
 
+function focusAndSelectAll(el) {
+  if (!el) return;
+  el.focus({ preventScroll: true });
+  const len = el.value.length;
+  try {
+    el.setSelectionRange(0, len);
+  } catch {
+    /* ignore */
+  }
+}
+
 export default function ChatWidget() {
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [activePromptIndex, setActivePromptIndex] = useState(0);
+  const [inputPulse, setInputPulse] = useState(false);
   const bottomRef = useRef(null);
   const inputRef = useRef(null);
 
@@ -24,16 +36,28 @@ export default function ChatWidget() {
     }
   }, [messages, loading, open]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!open) return undefined;
-    const id = requestAnimationFrame(() => {
-      const el = inputRef.current;
-      if (!el) return;
-      el.focus();
-      const len = el.value.length;
-      el.setSelectionRange(0, len);
+    setInputPulse(true);
+    const clearPulse = window.setTimeout(() => setInputPulse(false), 900);
+
+    function runSelect() {
+      focusAndSelectAll(inputRef.current);
+    }
+
+    runSelect();
+    const r1 = requestAnimationFrame(() => {
+      requestAnimationFrame(runSelect);
     });
-    return () => cancelAnimationFrame(id);
+    const t1 = window.setTimeout(runSelect, 50);
+    const t2 = window.setTimeout(runSelect, 200);
+
+    return () => {
+      clearTimeout(clearPulse);
+      cancelAnimationFrame(r1);
+      clearTimeout(t1);
+      clearTimeout(t2);
+    };
   }, [open]);
 
   useEffect(() => {
@@ -50,10 +74,9 @@ export default function ChatWidget() {
   function applySuggestedPrompt(text) {
     setInput(text);
     requestAnimationFrame(() => {
-      const el = inputRef.current;
-      if (!el) return;
-      el.focus();
-      el.setSelectionRange(0, text.length);
+      requestAnimationFrame(() => {
+        focusAndSelectAll(inputRef.current);
+      });
     });
   }
 
@@ -98,7 +121,9 @@ export default function ChatWidget() {
     } finally {
       setLoading(false);
       requestAnimationFrame(() => {
-        inputRef.current?.focus();
+        requestAnimationFrame(() => {
+          focusAndSelectAll(inputRef.current);
+        });
       });
     }
   }
@@ -174,7 +199,7 @@ export default function ChatWidget() {
         <div className="chat-widget-foot">
           <textarea
             ref={inputRef}
-            className="chat-widget-input"
+            className={`chat-widget-input${inputPulse ? ' chat-widget-input--pulse' : ''}`}
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}

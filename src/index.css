@@ -748,8 +748,63 @@ a:hover {
 }
 
 /* Chat widget */
+@keyframes chatAmbientPulse {
+  0%,
+  100% {
+    opacity: 0.2;
+    transform: scale(0.985);
+  }
+
+  50% {
+    opacity: 0.5;
+    transform: scale(1);
+  }
+}
+
+@keyframes chatPanelGlow {
+  0%,
+  100% {
+    box-shadow:
+      var(--shadow),
+      0 0 0 0 color-mix(in srgb, var(--accent) 0%, transparent);
+  }
+
+  50% {
+    box-shadow:
+      var(--shadow),
+      0 0 0 5px color-mix(in srgb, var(--accent) 10%, transparent);
+  }
+}
+
+@keyframes chatInputRing {
+  0% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 28%, transparent);
+  }
+
+  100% {
+    box-shadow: 0 0 0 10px transparent;
+  }
+}
+
 .chat-widget {
+  position: relative;
   margin-top: 2rem;
+  isolation: isolate;
+}
+
+.chat-widget:not(.chat-widget--open)::before {
+  content: '';
+  position: absolute;
+  inset: -5px;
+  z-index: -1;
+  border-radius: calc(var(--radius) + 6px);
+  background: radial-gradient(
+    ellipse 100% 80% at 50% 50%,
+    color-mix(in srgb, var(--accent) 22%, transparent),
+    transparent 72%
+  );
+  animation: chatAmbientPulse 2.75s ease-in-out infinite;
+  pointer-events: none;
 }
 
 .chat-widget-trigger {
@@ -808,6 +863,21 @@ a:hover {
   margin-top: 2rem;
 }
 
+.chat-widget--open::before {
+  content: '';
+  position: absolute;
+  inset: -8px;
+  z-index: -1;
+  border-radius: calc(var(--radius-lg) + 10px);
+  background: radial-gradient(
+    ellipse 100% 90% at 50% 30%,
+    color-mix(in srgb, var(--accent) 18%, transparent),
+    transparent 68%
+  );
+  animation: chatAmbientPulse 3.2s ease-in-out infinite;
+  pointer-events: none;
+}
+
 @keyframes chatPanelIn {
   from {
     opacity: 0;
@@ -820,12 +890,16 @@ a:hover {
 }
 
 .chat-widget-panel {
+  position: relative;
+  z-index: 0;
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   background: var(--bg-elevated);
   overflow: hidden;
   box-shadow: var(--shadow);
-  animation: chatPanelIn 0.4s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+  animation:
+    chatPanelIn 0.4s cubic-bezier(0.22, 1, 0.36, 1) backwards,
+    chatPanelGlow 2.8s ease-in-out 0.45s infinite alternate;
 }
 
 .chat-widget-head {
@@ -915,6 +989,8 @@ a:hover {
   word-break: break-word;
   animation: enterContent 0.35s cubic-bezier(0.22, 1, 0.36, 1) backwards;
 }
+
+.chat-widget-msg--user {
   align-self: flex-end;
   background: var(--text);
   color: var(--bg);
@@ -969,9 +1045,20 @@ a:hover {
     opacity: 0.6;
   }
 
+  .chat-widget:not(.chat-widget--open)::before,
+  .chat-widget--open::before {
+    animation: none;
+    opacity: 0.18;
+    transform: none;
+  }
+
   .chat-widget-panel,
   .chat-widget-msg {
     animation: none !important;
+  }
+
+  .chat-widget-input--pulse {
+    animation: none;
   }
 
   .chat-widget-trigger {
@@ -990,6 +1077,10 @@ a:hover {
   border-top: 1px solid var(--border);
   align-items: flex-end;
   background: var(--bg);
+}
+
+.chat-widget-input--pulse {
+  animation: chatInputRing 0.85s ease-out 1;
 }
 
 .chat-widget-input {
