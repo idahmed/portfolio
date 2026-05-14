@@ -24,27 +24,31 @@ function MoonIcon() {
   );
 }
 
-function Navbar({ links, activeSection, theme, onToggleTheme }) {
+function Navbar({ tabs, activeTab, onTabChange, theme, onToggleTheme }) {
   return (
     <header className="site-header">
       <nav className="navbar" aria-label="Primary">
         <div className="navbar-inner">
-          <a className="navbar-brand" href="#about">
+          <button type="button" className="navbar-brand" onClick={() => onTabChange('about')}>
             {personal.name}
-          </a>
+          </button>
 
-          <ul className="navbar-links">
-            {links.map((link) => (
-              <li key={link.id}>
-                <a
-                  className={`navbar-link${activeSection === link.id ? ' navbar-link--active' : ''}`}
-                  href={link.href}
-                >
-                  {link.label}
-                </a>
-              </li>
+          <div className="navbar-tabs" role="tablist" aria-label="Sections">
+            {tabs.map((tab) => (
+              <button
+                key={tab.id}
+                type="button"
+                role="tab"
+                id={`tab-${tab.id}`}
+                aria-selected={activeTab === tab.id}
+                aria-controls="portfolio-tab-panel"
+                className={`navbar-tab${activeTab === tab.id ? ' navbar-tab--active' : ''}`}
+                onClick={() => onTabChange(tab.id)}
+              >
+                {tab.label}
+              </button>
             ))}
-          </ul>
+          </div>
 
           <button
             type="button"

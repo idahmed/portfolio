@@ -133,37 +133,61 @@ a:hover {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  padding: 0;
 }
 
 .navbar-brand:hover {
   color: var(--accent);
-  text-decoration: none;
 }
 
-.navbar-links {
-  list-style: none;
+.navbar-brand:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+.navbar-tabs {
   display: flex;
   align-items: center;
-  gap: 1.25rem;
+  gap: 0.15rem;
   margin-left: auto;
+  padding: 0.2rem;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
 }
 
-.navbar-link {
-  font-size: 0.9rem;
+.navbar-tab {
+  font-family: inherit;
+  font-size: 0.875rem;
+  font-weight: 500;
   color: var(--text-muted);
-  text-decoration: none;
+  background: transparent;
+  border: none;
+  border-radius: calc(var(--radius) - 2px);
+  padding: 0.4rem 0.75rem;
+  cursor: pointer;
+  white-space: nowrap;
 }
 
-.navbar-link:hover {
+.navbar-tab:hover {
   color: var(--text);
-  text-decoration: none;
+  background: color-mix(in srgb, var(--bg-elevated) 80%, transparent);
 }
 
-.navbar-link--active {
+.navbar-tab--active {
   color: var(--text);
-  text-decoration: underline;
-  text-decoration-thickness: 1px;
-  text-underline-offset: 0.25em;
+  background: var(--bg-elevated);
+  box-shadow: var(--shadow);
+}
+
+.navbar-tab:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 
 .theme-toggle {
@@ -192,18 +216,42 @@ a:hover {
 }
 
 @media (max-width: 640px) {
-  .navbar-links {
-    gap: 0.75rem;
-  }
-
-  .navbar-link {
-    font-size: 0.82rem;
+  .navbar-tab {
+    font-size: 0.78rem;
+    padding: 0.35rem 0.55rem;
   }
 
   .navbar-brand {
     font-size: 0.82rem;
     max-width: 9rem;
   }
+}
+
+/* Tab panel */
+@keyframes tabFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.tab-panel {
+  animation: tabFadeIn 0.2s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tab-panel {
+    animation: none;
+  }
+}
+
+/* Single tab view: drop section top rule inside panel */
+.tab-panel .site-section {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: none;
 }
 
 /* Hero */
