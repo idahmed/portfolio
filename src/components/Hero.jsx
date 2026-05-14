@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { getAllSkillLabels, personal } from '../data/resume';
+import { personal } from '../data/resume';
 import ChatWidget from './ChatWidget';
 
 function PinIcon() {
@@ -71,7 +71,7 @@ function Hero() {
 
   return (
     <section id="about" className="site-section site-section--hero" aria-labelledby="intro-heading">
-      <div className="section-inner">
+      <div className="section-inner hero-animate">
         <p className="lede">Backend engineer · Python</p>
         <h1 id="intro-heading" className="display-name">
           {personal.name}
@@ -110,11 +110,6 @@ function Hero() {
             </li>
           ))}
         </ul>
-
-        <div className="stack-block">
-          <h2 className="stack-heading">Stack</h2>
-          <p className="stack-list">{getAllSkillLabels().join(' · ')}</p>
-        </div>
 
         <ChatWidget />
       </div>

@@ -7,7 +7,7 @@ function Projects() {
 
   return (
     <section id="projects" className="site-section" aria-labelledby="projects-heading">
-      <div className="section-inner">
+      <div className="section-inner projects-animate">
         <h2 id="projects-heading" className="section-title">
           Projects
         </h2>
@@ -15,8 +15,8 @@ function Projects() {
           Selected work. Click a row for detail.
         </p>
         <ul className="project-list">
-          {projects.map((project) => (
-            <li key={project.id}>
+          {projects.map((project, i) => (
+            <li key={project.id} style={{ '--project-stagger': i }}>
               <button
                 type="button"
                 className="project-row"

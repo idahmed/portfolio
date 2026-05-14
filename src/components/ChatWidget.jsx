@@ -2,11 +2,19 @@ import { useState, useRef, useEffect } from 'react';
 
 const WIDGET_TOKEN = import.meta.env.VITE_APP_SECRET_TOKEN || '';
 
+const SUGGESTED_PROMPTS = [
+  'What has Yassine built recently?',
+  'Summarize his backend experience.',
+  'Is he open to new roles?',
+  'Which frameworks does he use most?',
+];
+
 export default function ChatWidget() {
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
+  const [activePromptIndex, setActivePromptIndex] = useState(0);
   const bottomRef = useRef(null);
   const inputRef = useRef(null);
 
@@ -16,9 +24,41 @@ export default function ChatWidget() {
     }
   }, [messages, loading, open]);
 
+  useEffect(() => {
+    if (!open) return undefined;
+    const id = requestAnimationFrame(() => {
+      const el = inputRef.current;
+      if (!el) return;
+      el.focus();
+      const len = el.value.length;
+      el.setSelectionRange(0, len);
+    });
+    return () => cancelAnimationFrame(id);
+  }, [open]);
+
+  useEffect(() => {
+    if (open || messages.length > 0) return undefined;
+    if (typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      return undefined;
+    }
+    const t = setInterval(() => {
+      setActivePromptIndex((i) => (i + 1) % SUGGESTED_PROMPTS.length);
+    }, 3200);
+    return () => clearInterval(t);
+  }, [open, messages.length]);
+
+  function applySuggestedPrompt(text) {
+    setInput(text);
+    requestAnimationFrame(() => {
+      const el = inputRef.current;
+      if (!el) return;
+      el.focus();
+      el.setSelectionRange(0, text.length);
+    });
+  }
+
   function handleOpen() {
     setOpen(true);
-    setTimeout(() => inputRef.current?.focus(), 50);
   }
 
   async function sendMessage() {
@@ -57,6 +97,9 @@ export default function ChatWidget() {
       ]);
     } finally {
       setLoading(false);
+      requestAnimationFrame(() => {
+        inputRef.current?.focus();
+      });
     }
   }
 
@@ -71,12 +114,18 @@ export default function ChatWidget() {
     return (
       <div className="chat-widget">
         <button type="button" className="chat-widget-trigger" onClick={handleOpen}>
-          <span className="chat-widget-trigger-label">Questions about this site?</span>
+          <span className="chat-widget-trigger-label">
+            <span className="chat-widget-trigger-rotating" aria-live="polite">
+              {SUGGESTED_PROMPTS[activePromptIndex]}
+            </span>
+          </span>
           <span className="chat-widget-trigger-action">Open chat</span>
         </button>
       </div>
     );
   }
+
+  const showStarters = messages.length === 0 && !loading;
 
   return (
     <div className="chat-widget chat-widget--open">
@@ -89,8 +138,22 @@ export default function ChatWidget() {
         </div>
         <div className="chat-widget-body">
           <p className="chat-widget-note">
-            Ask about experience, stack, or roles. Replies are generated; verify anything important.
+            Ask about experience or roles. Replies are generated; verify anything important.
           </p>
+          {showStarters ? (
+            <div className="chat-widget-suggestions" role="group" aria-label="Suggested questions">
+              {SUGGESTED_PROMPTS.map((text) => (
+                <button
+                  key={text}
+                  type="button"
+                  className="chat-widget-suggestion"
+                  onClick={() => applySuggestedPrompt(text)}
+                >
+                  {text}
+                </button>
+              ))}
+            </div>
+          ) : null}
           {messages.map((msg, i) => (
             <div
               key={i}

@@ -231,14 +231,16 @@ a:hover {
 @keyframes tabFadeIn {
   from {
     opacity: 0;
+    transform: translateY(10px);
   }
   to {
     opacity: 1;
+    transform: translateY(0);
   }
 }
 
 .tab-panel {
-  animation: tabFadeIn 0.2s ease;
+  animation: tabFadeIn 0.35s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -252,6 +254,102 @@ a:hover {
   margin-top: 0;
   padding-top: 0;
   border-top: none;
+}
+
+/* Staggered content (tabs remount → replay) */
+@keyframes enterContent {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hero-animate > * {
+  animation: enterContent 0.55s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+}
+
+.hero-animate > *:nth-child(1) {
+  animation-delay: 0.04s;
+}
+
+.hero-animate > *:nth-child(2) {
+  animation-delay: 0.08s;
+}
+
+.hero-animate > *:nth-child(3) {
+  animation-delay: 0.12s;
+}
+
+.hero-animate > *:nth-child(4) {
+  animation-delay: 0.16s;
+}
+
+.hero-animate > *:nth-child(5) {
+  animation-delay: 0.2s;
+}
+
+.hero-animate > *:nth-child(6) {
+  animation-delay: 0.24s;
+}
+
+.hero-animate > *:nth-child(7) {
+  animation-delay: 0.28s;
+}
+
+.hero-animate > *:nth-child(8) {
+  animation-delay: 0.32s;
+}
+
+.skills-animate > .section-title,
+.skills-animate > .section-intro {
+  animation: enterContent 0.48s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+}
+
+.skills-animate > .section-title {
+  animation-delay: 0.05s;
+}
+
+.skills-animate > .section-intro {
+  animation-delay: 0.1s;
+}
+
+.skills-animate .skills-row {
+  animation: enterContent 0.48s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+  animation-delay: calc(0.14s + (var(--skills-stagger, 0) * 0.045s));
+}
+
+.projects-animate > .section-title,
+.projects-animate > .section-intro {
+  animation: enterContent 0.48s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+}
+
+.projects-animate > .section-title {
+  animation-delay: 0.05s;
+}
+
+.projects-animate > .section-intro {
+  animation-delay: 0.1s;
+}
+
+.projects-animate .project-list > li {
+  animation: enterContent 0.48s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+  animation-delay: calc(0.12s + (var(--project-stagger, 0) * 0.035s));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-animate > *,
+  .skills-animate > .section-title,
+  .skills-animate > .section-intro,
+  .skills-animate .skills-row,
+  .projects-animate > .section-title,
+  .projects-animate > .section-intro,
+  .projects-animate .project-list > li {
+    animation: none !important;
+  }
 }
 
 /* Hero */
@@ -342,27 +440,6 @@ a:hover {
   width: 1rem;
   height: 1rem;
   opacity: 0.85;
-}
-
-.stack-block {
-  margin-top: 2rem;
-  padding-top: 1.5rem;
-  border-top: 1px solid var(--border);
-}
-
-.stack-heading {
-  font-size: 0.8125rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--text-muted);
-  margin-bottom: 0.5rem;
-}
-
-.stack-list {
-  font-size: 0.9rem;
-  color: var(--text-muted);
-  line-height: 1.7;
 }
 
 /* Sections */
@@ -691,14 +768,31 @@ a:hover {
   border-radius: var(--radius);
   cursor: pointer;
   box-shadow: var(--shadow);
+  transition: border-color 0.2s ease, transform 0.2s ease;
 }
 
 .chat-widget-trigger:hover {
   border-color: var(--border-strong);
+  transform: translateY(-1px);
 }
 
 .chat-widget-trigger-label {
+  flex: 1;
+  min-width: 0;
+  min-height: 2.75em;
+  display: flex;
+  align-items: center;
+}
+
+.chat-widget-trigger-rotating {
+  font-size: 0.875rem;
   color: var(--text-muted);
+  line-height: 1.45;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  transition: opacity 0.35s ease;
 }
 
 .chat-widget-trigger-action {
@@ -714,12 +808,24 @@ a:hover {
   margin-top: 2rem;
 }
 
+@keyframes chatPanelIn {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .chat-widget-panel {
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   background: var(--bg-elevated);
   overflow: hidden;
   box-shadow: var(--shadow);
+  animation: chatPanelIn 0.4s cubic-bezier(0.22, 1, 0.36, 1) backwards;
 }
 
 .chat-widget-head {
@@ -767,6 +873,38 @@ a:hover {
   margin-bottom: 0.25rem;
 }
 
+.chat-widget-suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-bottom: 0.35rem;
+}
+
+.chat-widget-suggestion {
+  font-family: inherit;
+  font-size: 0.78rem;
+  line-height: 1.35;
+  text-align: left;
+  padding: 0.45rem 0.7rem;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
+}
+
+.chat-widget-suggestion:hover {
+  border-color: var(--border-strong);
+  color: var(--text);
+  background: var(--bg-elevated);
+}
+
+.chat-widget-suggestion:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
 .chat-widget-msg {
   max-width: 90%;
   padding: 0.5rem 0.75rem;
@@ -775,9 +913,8 @@ a:hover {
   line-height: 1.55;
   white-space: pre-wrap;
   word-break: break-word;
+  animation: enterContent 0.35s cubic-bezier(0.22, 1, 0.36, 1) backwards;
 }
-
-.chat-widget-msg--user {
   align-self: flex-end;
   background: var(--text);
   color: var(--bg);
@@ -794,6 +931,7 @@ a:hover {
   display: flex;
   align-items: center;
   gap: 0.25rem;
+  animation: none;
 }
 
 .chat-widget-dot {
@@ -829,6 +967,19 @@ a:hover {
   .chat-widget-dot {
     animation: none;
     opacity: 0.6;
+  }
+
+  .chat-widget-panel,
+  .chat-widget-msg {
+    animation: none !important;
+  }
+
+  .chat-widget-trigger {
+    transition: border-color 0.2s ease;
+  }
+
+  .chat-widget-trigger:hover {
+    transform: none;
   }
 }
 

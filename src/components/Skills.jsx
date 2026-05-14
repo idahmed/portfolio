@@ -3,7 +3,7 @@ import { skills } from '../data/resume';
 function Skills() {
   return (
     <section id="skills" className="site-section" aria-labelledby="skills-heading">
-      <div className="section-inner">
+      <div className="section-inner skills-animate">
         <h2 id="skills-heading" className="section-title">
           Skills
         </h2>
@@ -11,8 +11,8 @@ function Skills() {
           Day-to-day tools and areas I work in most.
         </p>
         <dl className="skills-list">
-          {skills.map((group) => (
-            <div className="skills-row" key={group.category}>
+          {skills.map((group, i) => (
+            <div className="skills-row" key={group.category} style={{ '--skills-stagger': i }}>
               <dt className="skills-term">
                 {group.category}
                 {group.level ? <span className="skills-level">{group.level}</span> : null}
