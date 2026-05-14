@@ -20,20 +20,19 @@ function ProjectModal({ project, onClose }) {
   };
 
   return (
-    <div className="modal-backdrop" onClick={handleBackdrop}>
+    <div className="modal-backdrop" onClick={handleBackdrop} role="presentation">
       <div className="modal-card" role="dialog" aria-modal="true" aria-labelledby="modal-title">
-        <button className="modal-close" onClick={onClose} aria-label="Close">
-          ✕
+        <button type="button" className="modal-close" onClick={onClose} aria-label="Close">
+          ×
         </button>
 
-        <div className="modal-header">
-          <h3 className="modal-title" id="modal-title">{project.title}</h3>
-          <div className="modal-title-line" />
-          <div className="modal-meta">
-            <span className="modal-company">{project.company}</span>
-            {project.period && <span className="modal-period">{project.period}</span>}
-          </div>
-        </div>
+        <h3 className="modal-title" id="modal-title">
+          {project.title}
+        </h3>
+        <p className="modal-meta">
+          <span className="modal-company">{project.company}</span>
+          {project.period ? <span className="modal-period">{project.period}</span> : null}
+        </p>
 
         <p className="modal-description">{project.description}</p>
 
@@ -43,11 +42,7 @@ function ProjectModal({ project, onClose }) {
           ))}
         </ul>
 
-        <div className="modal-tech">
-          {project.tech.map((t) => (
-            <span className="pill" key={t}>{t}</span>
-          ))}
-        </div>
+        <p className="modal-tech-line">{project.tech.join(' · ')}</p>
       </div>
     </div>
   );

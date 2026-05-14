@@ -1,6 +1,8 @@
+import { personal } from '../data/resume';
+
 function SunIcon() {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
       <circle cx="12" cy="12" r="5" />
       <line x1="12" y1="1" x2="12" y2="3" />
       <line x1="12" y1="21" x2="12" y2="23" />
@@ -16,41 +18,45 @@ function SunIcon() {
 
 function MoonIcon() {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
       <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
     </svg>
   );
 }
 
-function Navbar({ tabs, activeTab, onTabChange, theme, onToggleTheme }) {
+function Navbar({ links, activeSection, theme, onToggleTheme }) {
   return (
-    <nav className="navbar">
-      <div className="navbar-inner">
-        <button className="navbar-logo" onClick={() => onTabChange('about')} aria-label="Home">
-          <span className="navbar-logo-badge">YA</span>
-        </button>
+    <header className="site-header">
+      <nav className="navbar" aria-label="Primary">
+        <div className="navbar-inner">
+          <a className="navbar-brand" href="#about">
+            {personal.name}
+          </a>
 
-        <div className="navbar-tabs">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              className={`navbar-tab${activeTab === tab.id ? ' navbar-tab--active' : ''}`}
-              onClick={() => onTabChange(tab.id)}
-            >
-              {tab.label}
-            </button>
-          ))}
+          <ul className="navbar-links">
+            {links.map((link) => (
+              <li key={link.id}>
+                <a
+                  className={`navbar-link${activeSection === link.id ? ' navbar-link--active' : ''}`}
+                  href={link.href}
+                >
+                  {link.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+
+          <button
+            type="button"
+            className="theme-toggle"
+            onClick={onToggleTheme}
+            aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+          >
+            {theme === 'dark' ? <SunIcon /> : <MoonIcon />}
+          </button>
         </div>
-
-        <button
-          className="theme-toggle"
-          onClick={onToggleTheme}
-          aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
-        >
-          {theme === 'dark' ? <SunIcon /> : <MoonIcon />}
-        </button>
-      </div>
-    </nav>
+      </nav>
+    </header>
   );
 }
 

@@ -2,36 +2,30 @@ import { skills } from '../data/resume';
 
 function Skills() {
   return (
-    <div className="skills-content">
-      <p className="section-label">Expertise</p>
-      <div className="skills-grid">
-        {skills.map((group, i) => (
-          <div
-            className="skill-card"
-            key={group.category}
-            style={{ animationDelay: `${i * 0.05}s` }}
-          >
-            <div className="skill-card-header">
-              <span className="skill-card-icon" aria-hidden="true">{group.icon}</span>
-              <div className="skill-card-meta">
-                <h3 className="skill-card-title">
-                  {group.category}
-                  {group.level && (
-                    <span className="skill-card-level">{group.level}</span>
-                  )}
-                </h3>
-                <p className="skill-card-desc">{group.description}</p>
-              </div>
+    <section id="skills" className="site-section" aria-labelledby="skills-heading">
+      <div className="section-inner">
+        <h2 id="skills-heading" className="section-title">
+          Skills
+        </h2>
+        <p className="section-intro">
+          Day-to-day tools and areas I work in most.
+        </p>
+        <dl className="skills-list">
+          {skills.map((group) => (
+            <div className="skills-row" key={group.category}>
+              <dt className="skills-term">
+                {group.category}
+                {group.level ? <span className="skills-level">{group.level}</span> : null}
+              </dt>
+              <dd className="skills-detail">
+                <span className="skills-desc">{group.description}</span>
+                <span className="skills-items">{group.items.join(', ')}</span>
+              </dd>
             </div>
-            <div className="skill-card-pills">
-              {group.items.map((skill) => (
-                <span className="pill" key={skill}>{skill}</span>
-              ))}
-            </div>
-          </div>
-        ))}
+          ))}
+        </dl>
       </div>
-    </div>
+    </section>
   );
 }
 

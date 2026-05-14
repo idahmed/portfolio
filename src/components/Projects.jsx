@@ -6,38 +6,36 @@ function Projects() {
   const [selected, setSelected] = useState(null);
 
   return (
-    <div className="projects-content">
-      <p className="section-label">Selected Work</p>
-      <div className="projects-grid">
-        {projects.map((project, i) => (
-          <button
-            key={project.id}
-            className="project-card"
-            onClick={() => setSelected(project)}
-            style={{ animationDelay: `${i * 0.05}s` }}
-          >
-            <div className="project-card-top">
-              <h3 className="project-card-title">{project.title}</h3>
-              <span className="project-card-company">{project.company}</span>
-            </div>
-            <p className="project-card-desc">{project.description}</p>
-            <div className="project-card-tech">
-              {project.tech.slice(0, 4).map((t) => (
-                <span className="pill pill--sm" key={t}>{t}</span>
-              ))}
-              {project.tech.length > 4 && (
-                <span className="pill pill--sm pill--more">+{project.tech.length - 4}</span>
-              )}
-            </div>
-            <span className="project-card-hint">View details ›</span>
-          </button>
-        ))}
+    <section id="projects" className="site-section" aria-labelledby="projects-heading">
+      <div className="section-inner">
+        <h2 id="projects-heading" className="section-title">
+          Projects
+        </h2>
+        <p className="section-intro">
+          Selected work. Click a row for detail.
+        </p>
+        <ul className="project-list">
+          {projects.map((project) => (
+            <li key={project.id}>
+              <button
+                type="button"
+                className="project-row"
+                onClick={() => setSelected(project)}
+              >
+                <span className="project-row-main">
+                  <span className="project-row-title">{project.title}</span>
+                  <span className="project-row-company">{project.company}</span>
+                </span>
+                <span className="project-row-desc">{project.description}</span>
+                <span className="project-row-tech">{project.tech.join(' · ')}</span>
+              </button>
+            </li>
+          ))}
+        </ul>
       </div>
 
-      {selected && (
-        <ProjectModal project={selected} onClose={() => setSelected(null)} />
-      )}
-    </div>
+      {selected ? <ProjectModal project={selected} onClose={() => setSelected(null)} /> : null}
+    </section>
   );
 }
 
